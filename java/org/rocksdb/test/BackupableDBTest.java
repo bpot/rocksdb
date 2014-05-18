@@ -6,6 +6,8 @@
 package org.rocksdb.test;
 
 import org.rocksdb.*;
+import java.util.List;
+import java.util.ArrayList;
 
 public class BackupableDBTest {
   static final String db_path = "/tmp/backupablejni_db";
@@ -27,6 +29,14 @@ public class BackupableDBTest {
       bdb.createNewBackup(true);
       byte[] value = bdb.get("hello".getBytes());
       assert(new String(value).equals("BackupableDB"));
+      
+      LiveFiles live_files = bdb.getLiveFiles(true);
+      for(String s : live_files.table_files()) {
+        System.out.println("Table File! " + s);
+      }
+
+			System.out.println("Current File!" + live_files.current_file());
+			System.out.println("Manifest File!" + live_files.manifest_file() + " (" + live_files.manifest_file_size()  + ")");
     } catch (RocksDBException e) {
       System.err.format("[ERROR]: %s%n", e);
       e.printStackTrace();

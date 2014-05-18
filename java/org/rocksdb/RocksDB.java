@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.io.Closeable;
 import java.io.IOException;
 import org.rocksdb.util.Environment;
+import org.rocksdb.LiveFiles;
 
 /**
  * A RocksDB is a persistent ordered map from keys to values.  It is safe for
@@ -282,6 +283,10 @@ public class RocksDB extends RocksObject {
     return keyValueMap;
   }
 
+  public LiveFiles getLiveFiles(boolean flush) throws RocksDBException {
+    return getLiveFiles(nativeHandle_, flush);
+  }
+
   /**
    * Remove the database entry (if any) for "key".  Returns OK on
    * success, and a non-OK status on error.  It is not an error if "key"
@@ -370,6 +375,8 @@ public class RocksDB extends RocksObject {
       long handle, long writeOptHandle,
       byte[] key, int keyLen) throws RocksDBException;
   protected native long iterator0(long optHandle);
+  protected native LiveFiles getLiveFiles(long handle,
+			boolean flush);
   protected native void dispose(long handle);
 
   protected Filter filter_;
