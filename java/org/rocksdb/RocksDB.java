@@ -316,7 +316,7 @@ public class RocksDB extends RocksObject {
   }
 
   @Override protected void finalize() {
-    close();
+    //close();
   }
 
   /**
