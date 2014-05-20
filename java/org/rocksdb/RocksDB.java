@@ -287,6 +287,18 @@ public class RocksDB extends RocksObject {
     return getLiveFiles(nativeHandle_, flush);
   }
 
+	public void disableFileDeletions() throws RocksDBException {
+		disableFileDeletions(nativeHandle_);
+	}
+
+	public void enableFileDeletions() throws RocksDBException {
+		enableFileDeletions(nativeHandle_);
+	}
+
+  public String getName() {
+    return getName(nativeHandle_);
+  }
+
   /**
    * Remove the database entry (if any) for "key".  Returns OK on
    * success, and a non-OK status on error.  It is not an error if "key"
@@ -377,6 +389,9 @@ public class RocksDB extends RocksObject {
   protected native long iterator0(long optHandle);
   protected native LiveFiles getLiveFiles(long handle,
 			boolean flush);
+	protected native void disableFileDeletions(long handle) throws RocksDBException;
+	protected native void enableFileDeletions(long handle) throws RocksDBException;
+  protected native String getName(long handler);
   protected native void dispose(long handle);
 
   protected Filter filter_;

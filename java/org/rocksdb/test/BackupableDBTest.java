@@ -26,10 +26,13 @@ public class BackupableDBTest {
     try {
       bdb = BackupableDB.open(opt, bopt, db_path);
       bdb.put("hello".getBytes(), "BackupableDB".getBytes());
-      bdb.createNewBackup(true);
+      //bdb.createNewBackup(true);
       byte[] value = bdb.get("hello".getBytes());
       assert(new String(value).equals("BackupableDB"));
+
+			System.out.println("NAME: " + bdb.getName());
       
+			bdb.disableFileDeletions();
       LiveFiles live_files = bdb.getLiveFiles(true);
       for(String s : live_files.table_files()) {
         System.out.println("Table File! " + s);
@@ -37,6 +40,7 @@ public class BackupableDBTest {
 
 			System.out.println("Current File!" + live_files.current_file());
 			System.out.println("Manifest File!" + live_files.manifest_file() + " (" + live_files.manifest_file_size()  + ")");
+			bdb.enableFileDeletions();
     } catch (RocksDBException e) {
       System.err.format("[ERROR]: %s%n", e);
       e.printStackTrace();

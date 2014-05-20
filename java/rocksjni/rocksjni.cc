@@ -490,3 +490,50 @@ jobject Java_org_rocksdb_RocksDB_getLiveFiles(
 	return env->NewObject(jclazz, mid, jvalue_list, current_file, manifest_file,
 			manifest_file_size);
 }
+
+/*
+ * Class:     org_rocksdb_RocksDB
+ * Method:    disableFileDeletions
+ * Signature: (J)V
+ */
+void Java_org_rocksdb_RocksDB_disableFileDeletions(
+		JNIEnv *env, jobject jdb, jlong db_handle) {
+  auto db = reinterpret_cast<rocksdb::DB*>(db_handle);
+
+	rocksdb::Status s = db->DisableFileDeletions();
+
+	if(s.ok()) {
+		return;
+	}
+  rocksdb::RocksDBExceptionJni::ThrowNew(env, s);
+}
+
+/*
+ * Class:     org_rocksdb_RocksDB
+ * Method:    enableFileDeletions
+ * Signature: (J)V
+ */
+void Java_org_rocksdb_RocksDB_enableFileDeletions(
+		JNIEnv *env, jobject jdb, jlong db_handle) {
+  auto db = reinterpret_cast<rocksdb::DB*>(db_handle);
+
+	rocksdb::Status s = db->EnableFileDeletions();
+
+	if(s.ok()) {
+		return;
+	}
+  rocksdb::RocksDBExceptionJni::ThrowNew(env, s);
+}
+
+/*
+ * Class:     org_rocksdb_RocksDB
+ * Method:    getName
+ * Signature: (J)Ljava/lang/String;
+ */
+jstring Java_org_rocksdb_RocksDB_getName(
+		JNIEnv *env, jobject jdb, jlong db_handle) {
+
+  auto db = reinterpret_cast<rocksdb::DB*>(db_handle);
+
+	return env->NewStringUTF(db->GetName().c_str());
+}
