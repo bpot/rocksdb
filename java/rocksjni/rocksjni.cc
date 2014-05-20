@@ -500,11 +500,11 @@ void Java_org_rocksdb_RocksDB_disableFileDeletions(
 		JNIEnv *env, jobject jdb, jlong db_handle) {
   auto db = reinterpret_cast<rocksdb::DB*>(db_handle);
 
-	rocksdb::Status s = db->DisableFileDeletions();
+  rocksdb::Status s = db->DisableFileDeletions();
 
-	if(s.ok()) {
-		return;
-	}
+  if (s.ok()) {
+    return;
+  }
   rocksdb::RocksDBExceptionJni::ThrowNew(env, s);
 }
 
@@ -517,11 +517,11 @@ void Java_org_rocksdb_RocksDB_enableFileDeletions(
 		JNIEnv *env, jobject jdb, jlong db_handle) {
   auto db = reinterpret_cast<rocksdb::DB*>(db_handle);
 
-	rocksdb::Status s = db->EnableFileDeletions();
+  rocksdb::Status s = db->EnableFileDeletions();
 
-	if(s.ok()) {
-		return;
-	}
+  if (s.ok()) {
+    return;
+  }
   rocksdb::RocksDBExceptionJni::ThrowNew(env, s);
 }
 
@@ -535,5 +535,5 @@ jstring Java_org_rocksdb_RocksDB_getName(
 
   auto db = reinterpret_cast<rocksdb::DB*>(db_handle);
 
-	return env->NewStringUTF(db->GetName().c_str());
+  return env->NewStringUTF(db->GetName().c_str());
 }
