@@ -449,46 +449,47 @@ jlong Java_org_rocksdb_RocksDB_iterator0(
  */
 jobject Java_org_rocksdb_RocksDB_getLiveFiles(
 		JNIEnv *env, jobject jdb, jlong db_handle, jboolean flush) {
-	jclass jclazz;
-	jmethodID mid;
-	std::vector<std::string> live_files;
-	uint64_t manifest_file_size = 0;
-	uint64_t number;
-	rocksdb::FileType type;
+  jclass jclazz;
+  jmethodID mid;
+  std::vector<std::string> live_files;
+  uint64_t manifest_file_size = 0;
+  uint64_t number;
+  rocksdb::FileType type;
 
   auto db = reinterpret_cast<rocksdb::DB*>(db_handle);
   rocksdb::Status s = db->GetLiveFiles(live_files, &manifest_file_size, true);
 
-	// TODO: use portal.h?
+  // TODO: use portal.h?
   jclazz = env->FindClass("java/util/ArrayList");
   mid = rocksdb::ListJni::getArrayListConstructorMethodId(env, jclazz);
 
-	// TODO: is this legit?
+  // TODO: is this legit?
   jobject jvalue_list = env->NewObject(jclazz, mid, live_files.size() - 2);
 
-	jobject manifest_file = env->NewStringUTF("");
+  jobject manifest_file = env->NewStringUTF("");
   jobject current_file = env->NewStringUTF("");
 
-	// iterate
-  for(std::vector<std::string>::size_type i = 0; i != live_files.size(); i++) {
-		// TODO: Check for error
-		rocksdb::ParseFileName(live_files[i], &number, &type);
+  // iterate
+  for (std::vector<std::string>::size_type i = 0; i != live_files.size(); i++) {
+    // TODO: Check for error
+    rocksdb::ParseFileName(live_files[i], &number, &type);
 
-		if(type == rocksdb::kTableFile) {
-			env->CallBooleanMethod(
-					jvalue_list, rocksdb::ListJni::getListAddMethodId(env), env->NewStringUTF(live_files[i].c_str()));
-		} else if(type == rocksdb::kDescriptorFile) {
-			manifest_file = env->NewStringUTF(live_files[i].c_str());
-		} else if(type == rocksdb::kCurrentFile) {
-			current_file = env->NewStringUTF(live_files[i].c_str());
-		}
-	}
+    if (type == rocksdb::kTableFile) {
+      env->CallBooleanMethod(jvalue_list,
+                             rocksdb::ListJni::getListAddMethodId(env),
+                             env->NewStringUTF(live_files[i].c_str()));
+    } else if (type == rocksdb::kDescriptorFile) {
+      manifest_file = env->NewStringUTF(live_files[i].c_str());
+    } else if (type == rocksdb::kCurrentFile) {
+      current_file = env->NewStringUTF(live_files[i].c_str());
+    }
+  }
 
-	// TODO: Create LiveFineJni in portal.h
+  // TODO: Create LiveFineJni in portal.h
   jclazz = env->FindClass("org/rocksdb/LiveFiles");
   mid = rocksdb::LiveFilesJni::getConstructorMethodId(env, jclazz);
-	return env->NewObject(jclazz, mid, jvalue_list, current_file, manifest_file,
-			manifest_file_size);
+  return env->NewObject(jclazz, mid, jvalue_list, current_file, manifest_file,
+                        manifest_file_size);
 }
 
 /*
