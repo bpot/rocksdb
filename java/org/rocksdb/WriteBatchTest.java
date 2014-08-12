@@ -32,6 +32,9 @@ public class WriteBatchTest {
     System.out.println("Testing WriteBatchTest.Blob ===");
     Blob();
 
+    System.out.println("Testing WriteBatchTest.Contents ===");
+    Contents();
+
     // The following tests have not yet ported.
     // Continue();
     // PutGatherSlices();
@@ -114,6 +117,22 @@ public class WriteBatchTest {
               "Put(k2, v2)@1" +
               "Put(k3, v3)@2")
                 .equals(new String(getContents(batch), "US-ASCII")));
+    } catch (UnsupportedEncodingException e) {
+      System.err.println(e);
+      assert(false);
+    }
+  }
+
+  static void Contents() {
+    WriteBatch batch1 = new WriteBatch();
+    WriteBatch batch2 = new WriteBatch();
+    try {
+      batch1.put("hello".getBytes("US-ASCII"),"world".getBytes("US-ASCII"));
+      batch1.put("hello2".getBytes("US-ASCII"),"world3".getBytes("US-ASCII"));
+      byte[] contents = WriteBatchInternal.contents(batch1);
+      WriteBatchInternal.setContents(batch2, contents, contents.length);
+      System.out.println("COUNT: " + batch2.count());
+      assert(2 == batch2.count());
     } catch (UnsupportedEncodingException e) {
       System.err.println(e);
       assert(false);
