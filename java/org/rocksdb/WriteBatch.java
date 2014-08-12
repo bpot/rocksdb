@@ -144,4 +144,6 @@ class WriteBatchInternal {
   static native void setSequence(WriteBatch batch, long sn);
   static native long sequence(WriteBatch batch);
   static native void append(WriteBatch b1, WriteBatch b2);
+  static native byte[] contents(WriteBatch batch);
+  static native void setContents(WriteBatch batch, byte[] blob, int blobLen);
 }

@@ -218,11 +218,11 @@ dbg: $(LIBRARY) $(PROGRAMS) $(TESTS)
 # creates static library and programs
 release:
 	$(MAKE) clean
-	OPT="-DNDEBUG -O2" $(MAKE) static_lib $(PROGRAMS) -j32
+	OPT="-DNDEBUG -O2" $(MAKE) static_lib $(PROGRAMS) -j2
 
 coverage:
 	$(MAKE) clean
-	COVERAGEFLAGS="-fprofile-arcs -ftest-coverage" LDFLAGS+="-lgcov" $(MAKE) all check -j32
+	COVERAGEFLAGS="-fprofile-arcs -ftest-coverage" LDFLAGS+="-lgcov" $(MAKE) all check -j2
 	(cd coverage; ./coverage_test.sh)
 	# Delete intermediate files
 	find . -type f -regex ".*\.\(\(gcda\)\|\(gcno\)\)" -exec rm {} \;
@@ -244,7 +244,7 @@ whitebox_crash_test: db_stress
 
 asan_check:
 	$(MAKE) clean
-	COMPILE_WITH_ASAN=1 $(MAKE) check -j32
+	COMPILE_WITH_ASAN=1 $(MAKE) check -j2
 	$(MAKE) clean
 
 asan_crash_test:
@@ -576,7 +576,7 @@ rocksdbjavastaticpublish: rocksdbjavastaticrelease
 	mvn gpg:sign-and-deploy-file -Durl=https://oss.sonatype.org/service/local/staging/deploy/maven2/ -DrepositoryId=sonatype-nexus-staging -DpomFile=java/rocksjni.pom -Dfile=java/rocksdbjni-$(ROCKSDB_MAJOR).$(ROCKSDB_MINOR).$(ROCKSDB_PATCH).jar
 
 rocksdbjava:
-	OPT="-fPIC -DNDEBUG -O2" $(MAKE) $(LIBRARY) -j32
+	OPT="-fPIC -DNDEBUG -O2" $(MAKE) $(LIBRARY) -j2
 	cd java;$(MAKE) java;
 	rm -f ./java/$(ROCKSDBJNILIB)
 	$(CXX) $(CXXFLAGS) -I./java/. $(JAVA_INCLUDE) -shared -fPIC -o ./java/$(ROCKSDBJNILIB) $(JNI_NATIVE_SOURCES) $(LIBOBJECTS) $(JAVA_LDFLAGS) $(COVERAGEFLAGS)

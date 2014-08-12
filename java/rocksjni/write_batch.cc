@@ -275,6 +275,40 @@ void Java_org_rocksdb_WriteBatchInternal_append(
 }
 
 /*
+ * Class:     org_rocksdb_WriteBatchInternal
+ * Method:    contents
+ * Signature: (Lorg/rocksdb/WriteBatch;)[B
+ */
+jbyteArray Java_org_rocksdb_WriteBatchInternal_contents
+  (JNIEnv* env, jclass jclazz, jobject jobj) {
+  rocksdb::WriteBatch* b = rocksdb::WriteBatchJni::getHandle(env, jobj);
+
+  Slice contents = WriteBatchInternal::Contents(b);
+
+  jbyteArray jstate = env->NewByteArray(content.size());
+  env->SetByteArrayRegion(
+      jstate, 0, content.size(),
+      reinterpret_cast<const jbyte*>(content.c_str()));
+
+  return jstate;
+}
+
+/*
+ * Class:     org_rocksdb_WriteBatchInternal
+ * Method:    setContents
+ * Signature: (Lorg/rocksdb/WriteBatch;[B)V
+ */
+void Java_org_rocksdb_WriteBatchInternal_setContents
+  (JNIEnv* env, jclass jclazz, jobject jobj, jbyteArray jblob, jint blob_len) {
+  rocksdb::WriteBatch* b = rocksdb::WriteBatchJni::getHandle(env, jobj);
+
+  jbyte* blob = env->GetByteArrayElements(jblob, nullptr);
+  rocksdb::Slice blob_slice(reinterpret_cast<char*>(blob), jblob_len);
+  Slice contents = WriteBatchInternal::SetContents(b, blob_slice);
+  env->ReleaseByteArrayElements(jblob, blob, JNI_ABORT);
+}
+ 
+/*
  * Class:     org_rocksdb_WriteBatchTest
  * Method:    getContents
  * Signature: (Lorg/rocksdb/WriteBatch;)[B
