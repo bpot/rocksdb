@@ -35,6 +35,12 @@ public class WriteBatch extends RocksObject {
     newWriteBatch(reserved_bytes);
   }
 
+  public WriteBatch(byte[] contents) {
+    super();
+    newWriteBatch(contents.length);
+    WriteBatchInternal.setContents(this, contents, contents.length);
+  }
+
   /**
    * Returns the number of updates in the batch.
    */
@@ -103,6 +109,10 @@ public class WriteBatch extends RocksObject {
    */
   public void putLogData(byte[] blob) {
     putLogData(blob, blob.length);
+  }
+
+  public byte[] getContents() {
+    return WriteBatchInternal.contents(this);
   }
 
   /**
